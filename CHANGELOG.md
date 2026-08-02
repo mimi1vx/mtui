@@ -74,6 +74,16 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   activates, and every skipped host is named in the log. A failed combined
   transactional downgrade is now also reported as a per-host failure rather
   than relying solely on the post-rollback version verdict.
+- `update` now aborts when the pre-update `prepare` step could not run — no
+  preparer for a host, a contended operation lock, or the issue repo could not
+  be set — rather than adding the issue repo and dispatching the patch to
+  hosts on a broken premise. No update patch was dispatched at that point, so
+  there is no update for a downgrade to undo; use `--noprepare` to skip
+  prepare and patch anyway. A prepare that ran but only reported a per-host
+  package-manager failure now warns and lets the update proceed instead of
+  aborting it: a healthy SL Micro prepare routinely writes progress to
+  stderr, and hard-aborting on that would have blocked patching hosts that
+  were never actually broken.
 
 ## [26.1.1] - 2026-07-27
 
